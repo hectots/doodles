@@ -76,11 +76,17 @@ class Renderer {
       case DoodleAlphabet.DOODLE_END_SAVE:
         popMatrix();
         break;
-      case DoodleAlphabet.DOODLE_MODIFIER_UP:
-        config.stepUp(lastTransform);
+      case DoodleAlphabet.DOODLE_MODIFIER_FORWARD:
+        translate(config.getStep(), 0);
         break;
-      case DoodleAlphabet.DOODLE_MODIFIER_DOWN:
-        config.stepDown(lastTransform);
+      case DoodleAlphabet.DOODLE_MODIFIER_BACKWARD:
+        translate(-config.getStep(), 0);
+        break;
+      case DoodleAlphabet.DOODLE_MODIFIER_LEFT_TURN:
+        rotate(radians(config.getTurn()));
+        break;
+      case DoodleAlphabet.DOODLE_MODIFIER_RIGHT_TURN:
+        rotate(radians(-config.getTurn()));
         break;
     }
   }

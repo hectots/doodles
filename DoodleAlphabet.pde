@@ -23,8 +23,10 @@ static class DoodleAlphabet {
   static final char DOODLE_START_SAVE      = '[';
   static final char DOODLE_END_SAVE        = ']';
   
-  static final char DOODLE_MODIFIER_UP   = '+';
-  static final char DOODLE_MODIFIER_DOWN = '-';
+  static final char DOODLE_MODIFIER_FORWARD    = 'F';
+  static final char DOODLE_MODIFIER_BACKWARD   = 'B';
+  static final char DOODLE_MODIFIER_LEFT_TURN  = '+';
+  static final char DOODLE_MODIFIER_RIGHT_TURN = '-';
   
   static final char[] SYMBOLS = {
     DOODLE_POINT,
@@ -53,8 +55,10 @@ static class DoodleAlphabet {
   };
   
   static final char[] MODIFIERS = {
-    DOODLE_MODIFIER_UP,
-    DOODLE_MODIFIER_DOWN
+    DOODLE_MODIFIER_FORWARD,
+    DOODLE_MODIFIER_BACKWARD,
+    DOODLE_MODIFIER_LEFT_TURN,
+    DOODLE_MODIFIER_RIGHT_TURN
   };
   
   static boolean isTransform(char symbol) {

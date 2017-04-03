@@ -1,6 +1,8 @@
 // RendererConfig
 
 class RendererConfig {
+  int step;
+  int turn;
   int size;
   int xOffset;
   int yOffset;
@@ -23,7 +25,9 @@ class RendererConfig {
   final int UP = 1;
   final int DOWN = -1;
   
-  RendererConfig(int size, int xOffset, int yOffset, float scaleX, float scaleY, int angle) {
+  RendererConfig(int step, int turn, int size, int xOffset, int yOffset, float scaleX, float scaleY, int angle) {
+    this.step = step;
+    this.turn = turn;
     this.size = size;
     this.xOffset = xOffset;
     this.yOffset = yOffset;
@@ -80,6 +84,14 @@ class RendererConfig {
   
   int getSize() {
     return size;
+  }
+  
+  int getStep() {
+    return step;
+  }
+  
+  int getTurn() {
+    return turn;
   }
   
   int getXOffset() {

@@ -21,15 +21,17 @@ void setup() {
   size(480, 320);
   translate(width/2, height/2);
   
-  Rule[] productionRules = new Rule[2];
-  productionRules[0] = new Rule('X', "|(|(|))");
-  productionRules[1] = new Rule('Y', "X(((({Y}))))");
+  Rule[] productionRules = new Rule[4];
+  productionRules[0] = new Rule('S', "[B|F|F|]");
+  productionRules[1] = new Rule('X', "-YJ+XJX+JY-");
+  productionRules[2] = new Rule('Y', "+XJ-YJY-JX+");
+  productionRules[3] = new Rule('J', "SFFF");
   
   lSystem = new LSystem("Y", productionRules);
   lSystem.setVerbose(true);
-  lSystem.grow(5);
+  lSystem.grow(6);
   
-  RendererConfig config = new RendererConfig(25, 10, 0, .25, .25, 90);
+  RendererConfig config = new RendererConfig(5, 90, 15, 10, 0, .25, .25, 90);
   config.setXStep(10);
   config.setYStep(0);
   config.setScaleXStep(.05);
@@ -37,7 +39,8 @@ void setup() {
   config.setAngleStep(15);
   
   renderer = new Renderer(config);
-  //renderer.render("|(|(|))(((({|(|(|))}))))");
+  //renderer = new TurtleRenderer(1, radians(25));
+  //renderer.render("oF-Fo");
   renderer.render(lSystem.getSequence());
   //testRenderer();
 }
