@@ -16,4 +16,8 @@ class Rule {
   String getTransformation() {
     return transformation;
   }
+
+  String toString() {
+    return String.valueOf(symbol) + " -> " + transformation;
+  }
 }
