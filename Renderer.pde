@@ -1,14 +1,10 @@
 // TurtleRenderer
 
 class Renderer {
-  float len;
-  float theta;
-  PShape s;
+  RendererConfig config;
   
-  Renderer(float len, float theta, PShape s) {
-    this.len = len;
-    this.theta = theta;
-    this.s = s;
+  Renderer(RendererConfig config) {
+    this.config = config;
   }
   
   void render(String sequence) {
@@ -17,17 +13,17 @@ class Renderer {
       char symbol = sequence.charAt(i);
       switch (symbol) {
         case 'F':
-          shape(s);
-          translate(len, 0);
+          shape(config.getPShape());
+          translate(config.getStep(), 0);
           break;
         case 'G':
-          translate(len, 0);
+          translate(config.getStep(), 0);
           break;
         case '+':
-          rotate(theta);
+          rotate(config.getAngle());
           break;
         case '-':
-          rotate(-theta);
+          rotate(-config.getAngle());
           break;
         case '[':
           pushMatrix();
