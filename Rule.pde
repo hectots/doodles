@@ -12,6 +12,10 @@ class Rule {
   boolean matchSymbol(char symbol) {
     return this.symbol == symbol;
   }
+
+  char getSymbol() {
+    return symbol;
+  }
   
   String getTransformation() {
     return transformation;
