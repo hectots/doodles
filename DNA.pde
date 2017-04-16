@@ -13,10 +13,13 @@ class DNA {
   final int[] TYPE7_GENES = { 13 };
 
   final char[] TYPE3_EXPRESSIONS = "FG+-[]".toCharArray();
-  final int TYPE4_MAX_EXPRESSION = 5;
+  final int TYPE4_MIN_EXPRESSION = 5;
+  final int TYPE4_MAX_EXPRESSION = 10;
+  final float TYPE5_MIN_EXPRESSION = 10;
   final float TYPE5_MAX_EXPRESSION = 50;
+  final int TYPE6_MIN_EXPRESSION = 1;
   final int TYPE6_MAX_EXPRESSION = 2;
-  final float TYPE7_MAX_EXPRESSION = TWO_PI;
+  final float TYPE7_MAX_EXPRESSION = 360;
 
   DNA(Object[] genes) {
     this.genes = genes;
@@ -48,14 +51,14 @@ class DNA {
         if (isOfType(i, TYPE3_GENES)) {
           genes[i] = TYPE3_EXPRESSIONS[(int) random(TYPE3_EXPRESSIONS.length)];
         } else if (isOfType(i, TYPE4_GENES)) {
-          genes[i] = (int) random(TYPE4_MAX_EXPRESSION);
+          genes[i] = (int) random(TYPE4_MIN_EXPRESSION, TYPE4_MAX_EXPRESSION);
         } else if (isOfType(i, TYPE5_GENES)) {
-          genes[i] = random(TYPE5_MAX_EXPRESSION);
+          genes[i] = (int) random(TYPE5_MIN_EXPRESSION, TYPE5_MAX_EXPRESSION);
         } else if (isOfType(i, TYPE6_GENES)) {
-          int multiplier = (int) random(TYPE6_MAX_EXPRESSION);
-          genes[i] = ((float) genes[10]) * multiplier;
+          // int multiplier = (int) random(TYPE6_MIN_EXPRESSION, TYPE6_MAX_EXPRESSION);
+          // genes[i] = ((float) genes[11]) * multiplier;
         } else if (isOfType(i, TYPE7_GENES)) {
-          genes[i] = random(TYPE7_MAX_EXPRESSION);
+          genes[i] = radians((int) random(TYPE7_MAX_EXPRESSION));
         }
       }
     } 

@@ -50,29 +50,26 @@ class RulesFactory {
 
   // True if push symbols ('[') always have matching pop symbols (']'); false otherwise.
   boolean isRuleNormalized(char[] transformation) {
-    // Simulates a stack of push symbols.
-    ArrayList<Character> pushSymbolsStack = new ArrayList<Character>();
+    // Stack of push symbols.
+    Stack<Character> pushSymbolsStack = new Stack<Character>();
 
     // A sentinel symbol is added to the stack.
     char sentinel = '$';
-    pushSymbolsStack.add(sentinel);
+    pushSymbolsStack.push(sentinel);
 
     for (int i = 0; i != transformation.length; i++) {
       if (transformation[i] == '[') {
         // Add the symbol to the stack.
-        pushSymbolsStack.add('[');
+        pushSymbolsStack.push('[');
       } else if (transformation[i] == ']') {
         // Check the top of the stack.
-        char topOfStack = pushSymbolsStack.get(pushSymbolsStack.size() - 1);
+        char topOfStack = pushSymbolsStack.pop();
         if (topOfStack == sentinel) {
           // If the top of the stack is the sentinel then
           // there is not a matching symbol. Therefore the
           // transformation is not normalized.
           return false;
         }
-
-        // Remove matching symbol from the top of the stack.
-        pushSymbolsStack.remove(pushSymbolsStack.size() - 1);
       }
     }
 

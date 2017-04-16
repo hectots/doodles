@@ -1,27 +1,35 @@
 // Doodles
 // Use an LSystem to draw doodles.
 
-Doodle doodle;
+Doodle fitest;
 
 void setup() {
-  size(480, 320);
-
-  Object[] genes = {'A', 'A', 'F', 'G', 'A', 'A', '-', 'F', 'G', '+',
-                     2, 20, 4.0, 1.9373155};
-
-  doodle = new Doodle(new DNA(genes));
+  size(800, 600);
 }
 
 void draw() {
   background(255);
   translate(width/2, height/2);
 
-  doodle.drawDoodle();
+  if (fitest != null) {
+    fitest.drawDoodle();
+  }
 }
 
 void mousePressed() {
-  DNA previousDNA = doodle.getDNA();
-  println(previousDNA);
+  run();
+}
 
-  doodle = new Doodle();
+void run() {
+  int populationSize = 100;
+  float mutationRate = 0.01;
+  int generations = 25;
+  Population population = new Population(populationSize, mutationRate);
+
+  for (int i = 0; i != generations; i++) {
+    population.select();
+    population.reproduce();
+  }
+
+  fitest = population.getFitest();
 }

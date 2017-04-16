@@ -1,9 +1,9 @@
-// TurtleRenderer
+// Renderer
 
 class Renderer {
-  RendererConfig config;
+  Config config;
   
-  Renderer(RendererConfig config) {
+  Renderer(Config config) {
     this.config = config;
   }
   

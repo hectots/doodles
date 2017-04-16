@@ -1,12 +1,12 @@
-// RendererConfig
+// Config
 // Configuration for the Renderer.
 
-class RendererConfig {
+class Config {
   float step;
   float angle;
   PShape pShape;
 
-  RendererConfig(float step, float angle, PShape pShape) {
+  Config(float step, float angle, PShape pShape) {
     this.step = step;
     this.angle = angle;
     this.pShape = pShape;
