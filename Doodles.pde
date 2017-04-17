@@ -32,4 +32,8 @@ void run() {
   }
 
   fitest = population.getFitest();
+  Rule[] rules = fitest.getRules();
+  for (int i = 0; i != rules.length; i++) {
+    println(rules[i]);
+  }
 }

@@ -5,16 +5,16 @@ class DNA {
   Object[] genes;
 
   final int[] TYPE1_GENES = { 0 };
-  final int[] TYPE2_GENES = { 1 };
-  final int[] TYPE3_GENES = { 2, 3, 4, 5, 6, 7, 8, 9 };
-  final int[] TYPE4_GENES = { 10 };
-  final int[] TYPE5_GENES = { 11 };
-  final int[] TYPE6_GENES = { 12 };
-  final int[] TYPE7_GENES = { 13 };
+  final int[] TYPE2_GENES = { 1, 10 };
+  final int[] TYPE3_GENES = { 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16, 17, 18 };
+  final int[] TYPE4_GENES = { 19 };
+  final int[] TYPE5_GENES = { 20 };
+  final int[] TYPE6_GENES = { 21 };
+  final int[] TYPE7_GENES = { 22 };
 
   final char[] TYPE3_EXPRESSIONS = "FG+-[]".toCharArray();
-  final int TYPE4_MIN_EXPRESSION = 5;
-  final int TYPE4_MAX_EXPRESSION = 10;
+  final int TYPE4_MIN_EXPRESSION = 3;
+  final int TYPE4_MAX_EXPRESSION = 5;
   final float TYPE5_MIN_EXPRESSION = 10;
   final float TYPE5_MAX_EXPRESSION = 50;
   final int TYPE6_MIN_EXPRESSION = 1;

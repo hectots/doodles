@@ -14,10 +14,21 @@ class RulesFactory {
   Rule[] createRandomRules(int rulesCount) {
     Rule[] productionRules = new Rule[rulesCount];
     char[] vars = getVars();
+    char[] varInUse = new char[rulesCount];
+
+    int varsIndex = 0;
+    for (int i = 0; i != rulesCount; i++) {
+      varInUse[i] = vars[i];
+      varsIndex++;
+
+      // Prevent overflow.
+      if (varsIndex >= vars.length) {
+        varsIndex = 0;
+      }
+    }
 
     for (int i = 0; i != productionRules.length; i++) {
-      // TODO: Make each rule be a different var.
-      productionRules[i] = createRandomRule(vars[0]);
+      productionRules[i] = createRandomRule(varInUse, i);
     }
 
     return productionRules;
@@ -29,22 +40,21 @@ class RulesFactory {
     return validCapLetters.toCharArray();
   }
 
-  Rule createRandomRule(char var) {
-    char[] alphabet = getAlphabet(var);
-
+  Rule createRandomRule(char[] vars, int varIndex) {
+    char[] alphabet = getAlphabet(vars);
     char[] transformation = new char[8];
 
     do {
       for (int i = 0; i != transformation.length; i++) {
         transformation[i] = alphabet[(int)random(alphabet.length)];
       }
-    } while (!isRuleNormalized(transformation) || !isRuleRecursive(transformation, var) || !isRuleDrawable(transformation));
+    } while (!isRuleNormalized(transformation) || !isRuleRecursive(transformation, vars) || !isRuleDrawable(transformation));
 
-    return new Rule(var, new String(transformation));
+    return new Rule(vars[varIndex], new String(transformation));
   }
 
-  char[] getAlphabet(char var) {
-    String alphabetStr = "FG+-[]" + String.valueOf(var);
+  char[] getAlphabet(char[] vars) {
+    String alphabetStr = "FG+-[]" + new String(vars);
     return alphabetStr.toCharArray();
   }
 
@@ -78,10 +88,12 @@ class RulesFactory {
   }
 
   // True if the transformation contains at least one instance of variable; false otherwise.
-  boolean isRuleRecursive(char[] transformation, char variable) {
+  boolean isRuleRecursive(char[] transformation, char[] variables) {
     for (int i = 0; i != transformation.length; i++) {
-      if (transformation[i] == variable) {
-        return true;
+      for (int j = 0; j != variables.length; j++) {
+        if (transformation[i] == variables[j]) {
+          return true;
+        }
       }
     }
 

@@ -44,8 +44,11 @@ class Simulator {
           break;
         case ']':
           State restoredState = states.pop();
-          canvasOrigin = new PVector(restoredState.canvasOrigin.x, restoredState.canvasOrigin.y);
-          step = new PVector(restoredState.step.x, restoredState.step.y);
+
+          if (restoredState != null) {
+            canvasOrigin = new PVector(restoredState.canvasOrigin.x, restoredState.canvasOrigin.y);
+            step = new PVector(restoredState.step.x, restoredState.step.y);
+          }
           break;
       }
     }

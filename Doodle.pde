@@ -10,8 +10,8 @@ class Doodle {
 
   // Number of generations to grow the L-System.
   int lifeSpan;
-  final int MIN_GENERATIONS = 5;
-  final int MAX_GENERATIONS = 10;
+  final int MIN_GENERATIONS = 3;
+  final int MAX_GENERATIONS = 5;
 
   // Renderer configuration.
   Config config;
@@ -20,13 +20,16 @@ class Doodle {
   // DNA of the doodle.
   DNA dna;
   final int AXIOM_GENE = 0;
-  final int RULE_SYMBOL_GENE = 1;
-  final int RULE_GENES_START = 2;
-  final int RULE_GENES_END = 9;
-  final int LIFE_SPAN_GENE = 10;
-  final int SHAPE_SIZE_GENE = 11;
-  final int STEP_GENE = 12;
-  final int ANGLE_GENE = 13;
+  final int RULE1_SYMBOL_GENE = 1;
+  final int RULE1_GENES_START = 2;
+  final int RULE1_GENES_END = 9;
+  final int RULE2_SYMBOL_GENE = 10;
+  final int RULE2_GENES_START = 11;
+  final int RULE2_GENES_END = 18;
+  final int LIFE_SPAN_GENE = 19;
+  final int SHAPE_SIZE_GENE = 20;
+  final int STEP_GENE = 21;
+  final int ANGLE_GENE = 22;
 
   // Fitness of the doodle.
   float fitness;
@@ -38,7 +41,7 @@ class Doodle {
     // New doodles are random.
     RulesFactory rulesFactory = new RulesFactory();
     axiom = rulesFactory.createRandomAxiom();
-    productionRules = rulesFactory.createRandomRules();
+    productionRules = rulesFactory.createRandomRules(2);
 
     lifeSpan = (int) random(MIN_GENERATIONS, MAX_GENERATIONS);
 
@@ -63,16 +66,23 @@ class Doodle {
 
   float calculateFitness() {
     RulesFactory rulesFactory = new RulesFactory();
-    char symbol = productionRules[0].getSymbol();
-    char[] transformation = productionRules[0].getTransformation().toCharArray();
 
-    // Make sure to eliminate invalid rules.
-    if (!rulesFactory.isRuleNormalized(transformation)        ||
-        !rulesFactory.isRuleRecursive(transformation, symbol) ||
-        !rulesFactory.isRuleDrawable(transformation)) {
-      fitness = 0;
-      wasFitnessCalculated = true;
-      return fitness;
+    char[] vars = new char[2];
+    vars[0] = productionRules[0].getSymbol();
+    vars[1] = productionRules[1].getSymbol();
+
+    for (int i = 0; i != productionRules.length; i++) {
+      char symbol = productionRules[i].getSymbol();
+      char[] transformation = productionRules[i].getTransformation().toCharArray();
+
+      // Make sure to eliminate invalid rules.
+      if (!rulesFactory.isRuleNormalized(transformation)        ||
+          !rulesFactory.isRuleRecursive(transformation, vars)   ||
+          !rulesFactory.isRuleDrawable(transformation)) {
+        fitness = 0;
+        wasFitnessCalculated = true;
+        return fitness;
+      }
     }
 
     LSystem lSystem = new LSystem(axiom, productionRules);
@@ -93,16 +103,24 @@ class Doodle {
   }
 
   void configDNA() {
-    Object[] genes = new Object[14];
+    Object[] genes = new Object[23];
 
     genes[AXIOM_GENE] = axiom.charAt(0);
 
     Rule rule = productionRules[0];
-    genes[RULE_SYMBOL_GENE] = rule.getSymbol();
+    genes[RULE1_SYMBOL_GENE] = rule.getSymbol();
 
     char[] ruleTransformation = rule.getTransformation().toCharArray();
-    for (int i = RULE_GENES_START; i <= RULE_GENES_END; i++) {
-      genes[i] = ruleTransformation[i - RULE_GENES_START];
+    for (int i = RULE1_GENES_START; i <= RULE1_GENES_END; i++) {
+      genes[i] = ruleTransformation[i - RULE1_GENES_START];
+    }
+
+    rule = productionRules[1];
+    genes[RULE2_SYMBOL_GENE] = rule.getSymbol();
+
+    ruleTransformation = rule.getTransformation().toCharArray();
+    for (int i = RULE2_GENES_START; i <= RULE2_GENES_END; i++) {
+      genes[i] = ruleTransformation[i - RULE2_GENES_START];
     }
 
     genes[LIFE_SPAN_GENE] = lifeSpan;
@@ -119,13 +137,21 @@ class Doodle {
 
     axiom = String.valueOf((char) genes[AXIOM_GENE]);
 
+    productionRules = new Rule[2];
+
     char[] ruleTransformation = new char[8];
-    for (int i = RULE_GENES_START; i <= RULE_GENES_END; i++) {
-      ruleTransformation[i - RULE_GENES_START] = (char) genes[i];
+    for (int i = RULE1_GENES_START; i <= RULE1_GENES_END; i++) {
+      ruleTransformation[i - RULE1_GENES_START] = (char) genes[i];
     }
 
-    productionRules = new Rule[1];
-    productionRules[0] = new Rule((char) genes[RULE_SYMBOL_GENE], new String(ruleTransformation));
+    productionRules[0] = new Rule((char) genes[RULE1_SYMBOL_GENE], new String(ruleTransformation));
+
+    ruleTransformation = new char[8];
+    for (int i = RULE2_GENES_START; i <= RULE2_GENES_END; i++) {
+      ruleTransformation[i - RULE2_GENES_START] = (char) genes[i];
+    }
+
+    productionRules[1] = new Rule((char) genes[RULE2_SYMBOL_GENE], new String(ruleTransformation));
 
     lifeSpan = (int) genes[LIFE_SPAN_GENE];
 
@@ -162,5 +188,9 @@ class Doodle {
 
   PShape createDoodleShape(int size) {
     return createShape(RECT, -size/2, -size/2, size, size);
+  }
+
+  Rule[] getRules() {
+    return productionRules;
   }
 }
