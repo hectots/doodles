@@ -76,11 +76,29 @@ class DNA {
 
   String toString() {
     StringBuffer buffer = new StringBuffer();
+    buffer.append("{");
     for (int i = 0; i != genes.length; i++) {
-      buffer.append(genes[i].toString());
+      if (genes[i] instanceof Character) {
+        buffer.append("'" + genes[i].toString() + "'");
+      } else {
+        buffer.append(genes[i].toString());
+      }
 
       if (i != genes.length - 1) {
         buffer.append(", ");
+      }
+    }
+    buffer.append("}");
+
+    return buffer.toString();
+  }
+
+  String encode() {
+    StringBuffer buffer = new StringBuffer();
+    for (int i = 0; i != genes.length; i++) {
+      buffer.append(genes[i].toString());
+      if (i != genes.length - 1) {
+        buffer.append("_");
       }
     }
 

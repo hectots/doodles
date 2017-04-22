@@ -32,7 +32,7 @@ class Doodle {
   final int ANGLE_GENE = 22;
 
   // Fitness of the doodle.
-  float fitness;
+  Fitness fitness;
 
   // Whether or not the fitness was calculated for the current dna.
   boolean wasFitnessCalculated;
@@ -55,7 +55,7 @@ class Doodle {
     interpretDNA();
   }
 
-  float getFitness() {
+  Fitness getFitness() {
     if (wasFitnessCalculated) {
       return fitness;
     }
@@ -64,7 +64,7 @@ class Doodle {
     return fitness;
   }
 
-  float calculateFitness() {
+  Fitness calculateFitness() {
     RulesFactory rulesFactory = new RulesFactory();
 
     char[] vars = new char[2];
@@ -79,7 +79,7 @@ class Doodle {
       if (!rulesFactory.isRuleNormalized(transformation)        ||
           !rulesFactory.isRuleRecursive(transformation, vars)   ||
           !rulesFactory.isRuleDrawable(transformation)) {
-        fitness = 0;
+        fitness = new Fitness(0);
         wasFitnessCalculated = true;
         return fitness;
       }
@@ -91,12 +91,9 @@ class Doodle {
     Simulator simulator = new Simulator(config);
     simulator.simulate(lSystem.getSequence());
 
-    Analizer analizer = new Analizer(simulator.getLocations());
-    float symmetryRating = analizer.rateSymmetry();
-    float growthRating = analizer.rateGrowth();
+    fitness = new Fitness(simulator.getLocations());
+    fitness.rate();
 
-    fitness = symmetryRating + growthRating;
-    // fitness = growthRating;
     wasFitnessCalculated = true;
 
     return fitness;
