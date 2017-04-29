@@ -18,6 +18,7 @@ int memberToDraw = 0;
 boolean saveDoodle = false;
 String savesPrefix = "populations/population_";
 String starredSavesPrefix = "starred/";
+boolean drawAxis = true;
 
 void setup() {
   size(800, 600);
@@ -26,6 +27,13 @@ void setup() {
 void draw() {
   background(255);
   translate(width/2, height/2);
+  
+  if (drawAxis) {
+    stroke(190);
+    line(0, -height/2, 0, height/2);
+    line(-width/2, 0, width/2, 0);
+    stroke(0);
+  }
 
   if (population != null) {
     if (drawFitestOnly) {
@@ -65,7 +73,7 @@ void mousePressed() {
 }
 
 void keyPressed() {
-  if (key == 'a') {
+  if (key == 'a') { //<>//
     println(population.getFitest().getFitness());
   } else if (key == 's') {
     saveFrame(starredSavesPrefix + population.getFitest().getDNA().encode() + ".png");
