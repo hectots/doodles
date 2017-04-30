@@ -56,11 +56,10 @@ class Doodle {
   }
 
   Fitness getFitness() {
-    if (wasFitnessCalculated) {
-      return fitness;
+    if (!wasFitnessCalculated) {
+      calculateFitness();
     }
-
-    calculateFitness();
+    
     return fitness;
   }
 
