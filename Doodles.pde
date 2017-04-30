@@ -28,35 +28,37 @@ void setup() {
 }
 
 void draw() {
-  background(255);
-  translate(width/2, height/2);
+  if (frameCount % 6 == 0) {
+    background(255);
+    translate(width/2, height/2);
 
-  drawHelp();
-  
-  if (drawAxis) {
-    stroke(190);
-    line(0, -height/2, 0, height/2);
-    line(-width/2, 0, width/2, 0);
-    stroke(0);
-  }
+    drawHelp();
+    
+    if (drawAxis) {
+      stroke(190);
+      line(0, -height/2, 0, height/2);
+      line(-width/2, 0, width/2, 0);
+      stroke(0);
+    }
 
-  if (population != null) {
-    if (drawFitestOnly) {
-      drawDoodleWithDNAInfo(population.getFitest());
+    if (population != null) {
+      if (drawFitestOnly) {
+        drawDoodleWithDNAInfo(population.getFitest());
 
-      if (saveDoodle) {
-        saveFrame(savesPrefix + population.getId() + "/member_fittest.png");
+        if (saveDoodle) {
+          saveFrame(savesPrefix + population.getId() + "/member_fittest.png");
+        }
+      } else {
+        drawDoodleWithDNAInfo(population.getMember(memberToDraw));
+        memberToDraw = (memberToDraw + 1) % population.getPopulationSize();
+
+        if (saveDoodle) {
+          saveFrame(savesPrefix + population.getId() + "/member_" + zeroPadded(memberToDraw) + ".png");
+        }
       }
     } else {
-      drawDoodleWithDNAInfo(population.getMember(memberToDraw));
-      memberToDraw = (memberToDraw + 1) % population.getPopulationSize();
-
-      if (saveDoodle) {
-        saveFrame(savesPrefix + population.getId() + "/member_" + zeroPadded(memberToDraw) + ".png");
-      }
+      drawStartInstructions();
     }
-  } else {
-    drawStartInstructions();
   }
 }
 
@@ -66,6 +68,7 @@ void drawHelp() {
     "Press 'a' to print analysis.\n" +
     "Press 'x' to toggle the axis.\n" +
     "Press 'f' to toggle between fittest and all.\n" +
+    "Press 'i' to toggle DNA and fitness information.\b" +
     "Press 'h' to close help.";
 
   if (!showHelp) {
@@ -80,7 +83,7 @@ void drawHelp() {
 }
 
 void drawDoodleWithDNAInfo(Doodle doodle) {
-  if (doodle.getFitness().getFitnessRating() > 0) {
+  if (doodle.getFitness().getRating() > 0) {
     pushMatrix();
     doodle.drawDoodle();
     popMatrix();
@@ -91,7 +94,7 @@ void drawDoodleWithDNAInfo(Doodle doodle) {
     textAlign(CENTER);
     fill(0, 0, 0);
     text(String.format("DNA: %s, Fitness: %f",
-      doodle.getDNA().toString(), doodle.getFitness().getFitnessRating()), 0, height/2 - 36);
+      doodle.getDNA().toString(), doodle.getFitness().getRating()), 0, height/2 - 36);
     fill(255, 255, 255);
   }
 }
@@ -134,7 +137,7 @@ void dumpPopulationDNAToDisk(Population population) {
   Doodle[] populationMembers = population.getMembers();
   for (int j = 0; j != populationMembers.length; j++) {
     Doodle member = populationMembers[j];
-    writer.println(j + " | " + member.getDNA().toString() + "  |  " + member.getFitness().getFitnessRating());
+    writer.println(j + " | " + member.getDNA().toString() + "  |  " + member.getFitness().getRating());
   }
   writer.flush();
   writer.close();
@@ -150,6 +153,8 @@ void keyPressed() {
   } else if (key == 'f') {
     memberToDraw = 0;
     drawFitestOnly = !drawFitestOnly;
+  } else if (key == 'i') {
+    outputDNAAndFitness = !outputDNAAndFitness;
   } else if (key == 'h') {
     showHelp = !showHelp;
   }

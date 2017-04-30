@@ -37,7 +37,7 @@ class Population {
     // of the population get picked up from the mating pool.
     if (maxFitness > 0) {
       for (int i = 0; i != population.length; i++) {
-        float fitnessNormal = map(population[i].getFitness().getFitnessRating(), 0, maxFitness, 0, 1);
+        float fitnessNormal = map(population[i].getFitness().getRating(), 0, maxFitness, 0, 1);
         int n = (int) (fitnessNormal * 100);
         for (int j = 0; j < n; j++) {
           matingPool.add(population[i]);
@@ -65,6 +65,10 @@ class Population {
       }
     }
 
+    // Reset fitest value for the new generation
+    // so that it will be calculated again.
+    fitest = null;
+
     generations++;
   }
 
@@ -75,10 +79,9 @@ class Population {
     float maxGrowth = getMaxGrowth();
 
     for (int i = 0; i != population.length; i++) {
-      Fitness fitness = population[i].getFitness();
-      if (fitness.calculate(maxSymmetry, maxExactSymmetry, maxGrowth) > max) {
-        max = fitness.calculate(maxSymmetry, maxExactSymmetry, maxGrowth);
-        fitest = population[i];
+      float fitness = population[i].getFitness().calculate(maxSymmetry, maxExactSymmetry, maxGrowth);
+      if (fitness > max) {
+        max = fitness;
       }
     }
 
@@ -125,6 +128,15 @@ class Population {
   }
 
   Doodle getFitest() {
+    if (fitest == null) {
+      float maxFitness = getMaxFitness();
+      for (int i = 0; i != population.length; i++) {
+        if (population[i].getFitness().getRating() == maxFitness) {
+          fitest = population[i];
+        }
+      }
+    }
+
     return fitest;
   }
 

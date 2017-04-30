@@ -41,7 +41,7 @@ class Fitness {
     return growthRating;
   }
 
-  float getFitnessRating() {
+  float getRating() {
     return fitnessRating;
   }
 
