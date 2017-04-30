@@ -8,7 +8,13 @@ Population population;
 // Population options
 int populationSize = 100;
 float mutationRate = 0.01;
-int generations = 25;
+int maxGenerations = 25;
+
+// Fitness factors
+float symmetryImportanceFactor = 1;
+float distributionImportanceFactor = 2;
+float growthImportanceFactor = 3;
+float minimumFitness = 0.9;
 
 // Output options
 String savesPrefix = "populations/population_";
@@ -17,10 +23,11 @@ boolean printRulesForFittest = false;
 boolean dumpPopulationDNA = true;
 boolean drawFitestOnly = true;
 boolean outputDNAAndFitness = false;
-int memberToDraw = 0;
 boolean saveDoodle = false;
 boolean showHelp = false;
 boolean drawAxis = false;
+
+int memberToDraw = 0;
 
 void setup() {
   size(800, 600);
@@ -93,7 +100,7 @@ void drawDoodleWithDNAInfo(Doodle doodle) {
     textSize(12);
     textAlign(CENTER);
     fill(0, 0, 0);
-    text(String.format("DNA: %s, Fitness: %f",
+    text(String.format("DNA: %s\nFitness: %f",
       doodle.getDNA().toString(), doodle.getFitness().getRating()), 0, height/2 - 36);
     fill(255, 255, 255);
   }
@@ -114,14 +121,20 @@ void mousePressed() {
 void run() {
   population = new Population(timestamp(), populationSize, mutationRate);
 
-  for (int i = 0; i != generations; i++) {
+  do {
     if (dumpPopulationDNA) {
       dumpPopulationDNAToDisk(population);
     }
 
     population.select();
     population.reproduce();
-  }
+
+    if (population.getMaxFitness() <= 0) {
+      // A max fitness of zero means a failed population.
+      // Start over with a new random population.
+      population = new Population(timestamp(), populationSize, mutationRate);
+    }
+  } while (population.getMaxFitness() <= minimumFitness && population.getGenerations() <= maxGenerations);
 
   if (printRulesForFittest) {
     Doodle fitest = population.getFitest();

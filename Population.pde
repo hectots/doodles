@@ -74,12 +74,12 @@ class Population {
 
   float getMaxFitness() {
     float max = 0;
+    float maxDistribution = getMaxDistribution();
     float maxSymmetry = getMaxSymmetry();
-    float maxExactSymmetry = getMaxExactSymmetry();
     float maxGrowth = getMaxGrowth();
 
     for (int i = 0; i != population.length; i++) {
-      float fitness = population[i].getFitness().calculate(maxSymmetry, maxExactSymmetry, maxGrowth);
+      float fitness = population[i].getFitness().calculate(maxDistribution, maxSymmetry, maxGrowth);
       if (fitness > max) {
         max = fitness;
       }
@@ -88,6 +88,19 @@ class Population {
     return max;
   }
 
+  float getMaxDistribution() {
+    float max = 0;
+
+    for (int i = 0; i != population.length; i++) {
+      Fitness fitness = population[i].getFitness();
+      if (fitness.getDistributionRating() > max) {
+        max = fitness.getDistributionRating();
+      }
+    }
+
+    return max;
+  }
+  
   float getMaxSymmetry() {
     float max = 0;
 
@@ -95,19 +108,6 @@ class Population {
       Fitness fitness = population[i].getFitness();
       if (fitness.getSymmetryRating() > max) {
         max = fitness.getSymmetryRating();
-      }
-    }
-
-    return max;
-  }
-  
-  float getMaxExactSymmetry() {
-    float max = 0;
-
-    for (int i = 0; i != population.length; i++) {
-      Fitness fitness = population[i].getFitness();
-      if (fitness.getExactSymmetryRating() > max) {
-        max = fitness.getExactSymmetryRating();
       }
     }
 
