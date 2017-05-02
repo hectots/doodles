@@ -36,7 +36,10 @@ void setup() {
 
 void draw() {
   if (frameCount % 6 == 0) {
-    background(255);
+    background(0);
+    blendMode(ADD);
+    noFill();
+    stroke(0);
     translate(width/2, height/2);
 
     drawHelp();
@@ -75,7 +78,7 @@ void drawHelp() {
     "Press 'a' to print analysis.\n" +
     "Press 'x' to toggle the axis.\n" +
     "Press 'f' to toggle between fittest and all.\n" +
-    "Press 'i' to toggle DNA and fitness information.\b" +
+    "Press 'i' to toggle DNA and fitness information.\n" +
     "Press 'h' to close help.";
 
   if (!showHelp) {
@@ -84,9 +87,9 @@ void drawHelp() {
 
   textSize(12);
   textAlign(LEFT);
-  fill(0, 0, 0);
-  text(helpMessage, -width/2, -height/2 + 12);
   fill(255, 255, 255);
+  text(helpMessage, -width/2, -height/2 + 12);
+  fill(0, 0, 0);
 }
 
 void drawDoodleWithDNAInfo(Doodle doodle) {
@@ -99,10 +102,10 @@ void drawDoodleWithDNAInfo(Doodle doodle) {
   if (outputDNAAndFitness) {
     textSize(12);
     textAlign(CENTER);
-    fill(0, 0, 0);
+    fill(255, 255, 255);
     text(String.format("DNA: %s\nFitness: %f",
       doodle.getDNA().toString(), doodle.getFitness().getRating()), 0, height/2 - 36);
-    fill(255, 255, 255);
+    fill(0, 0, 0);
   }
 }
 

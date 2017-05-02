@@ -13,7 +13,11 @@ class Renderer {
       char symbol = sequence.charAt(i);
       switch (symbol) {
         case 'F':
-          shape(config.getPShape());
+          PShape s = config.getPShape();
+          s.setStroke(color(255, 64, 8, 128));
+          s.setFill(color(0,0,0,0));
+          
+          shape(s);
           translate(config.getStep(), 0);
           break;
         case 'G':
