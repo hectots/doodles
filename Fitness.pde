@@ -148,7 +148,7 @@ class Fitness {
   }
 
   String toString() {
-    return String.format("Fitness Rating: %f\n\tDistribution: %f\n\t\tOn left: %d\n\t\tOn right: %d\n\t\tOn top: %d\n\t\tOn bottom: %d\n\tSymmetry: %f\n\tGrowth: %f\n\t\tExpantion point: %d",
+    return String.format("Fitness Rating: %f\n\tDistribution: %f\n\t\tOn left: %d\n\t\tOn right: %d\n\t\tOn top: %d\n\t\tOn bottom: %d\n\tSymmetry: %f\n\t\tLocations: %d\n\tGrowth: %f\n\t\tExpansion point: %d",
         fitnessRating,
           distributionRating,
             onLeft,
@@ -156,6 +156,7 @@ class Fitness {
             onTop,
             onBottom,
           symmetryRating,
+            locations.size(),
           growthRating,
             expansionPoints);
   }
