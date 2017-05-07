@@ -48,7 +48,7 @@ class Fitness {
   float calculate(float maxDistributionRating, float maxSymmetryRating, float maxGrowthRating) {
     if (!wasCalculated) {
       float normaDistribution = norm(distributionRating, 0, maxDistributionRating);
-      float normalSymmetry = norm(symmetryRating, 0, maxSymmetryRating);
+      float normalSymmetry = norm(symmetryRating, 0, 1); // new fitness algorithm caps at 1.
       float normalGrowthRating = norm(growthRating, 0, maxGrowthRating);
       float combinedRatings = distributionImportanceFactor * normaDistribution +
         symmetryImportanceFactor * normalSymmetry +
@@ -125,7 +125,7 @@ class Fitness {
       totalPoints += (points % 3);
     }
     
-    return totalPoints;
+    return (float) totalPoints / (locations.size() * 3);
   }
 
   float rateGrowth() {

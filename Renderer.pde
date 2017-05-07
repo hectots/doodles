@@ -14,8 +14,8 @@ class Renderer {
       switch (symbol) {
         case 'F':
           PShape s = config.getPShape();
-          s.setStroke(color(255, 64, 8, 128));
-          s.setFill(color(0,0,0,0));
+          s.setStroke(currentTheme.getStrokeColor());
+          s.setFill(currentTheme.getFillColor());
           
           shape(s);
           translate(config.getStep(), 0);

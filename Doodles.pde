@@ -13,7 +13,7 @@ int maxGenerations = 25;
 // Fitness factors
 float symmetryImportanceFactor = 1;
 float distributionImportanceFactor = 2;
-float growthImportanceFactor = 3;
+float growthImportanceFactor = 2;
 float minimumFitness = 0.9;
 
 // Output options
@@ -22,12 +22,22 @@ String starredSavesPrefix = "starred/";
 boolean printRulesForFittest = false;
 boolean dumpPopulationDNA = true;
 boolean drawFitestOnly = true;
-boolean outputDNAAndFitness = false;
-boolean saveDoodle = false;
+boolean outputDNAAndFitness = true;
+boolean saveDoodle = true;
 boolean showHelp = false;
 boolean drawAxis = false;
 
+Theme lightTheme = new Theme(color(255, 255, 255), color(0, 0, 0), color(0, 0, 0));
+Theme darkTheme = new Theme(color(0, 0, 0), color(255, 64, 8, 128), color(255, 255, 255));
+Theme currentTheme = lightTheme;
+
 int memberToDraw = 0;
+
+// Test mode options
+boolean runOnTestMode = true;
+int numberOfTests = 25;
+int testsRan = 0;
+String testsPrefix = "tests/test_";
 
 void setup() {
   size(800, 600);
@@ -36,35 +46,62 @@ void setup() {
 
 void draw() {
   if (frameCount % 6 == 0) {
-    background(0);
-    blendMode(ADD);
-    noFill();
-    stroke(0);
+    background(currentTheme.getFillColor());
+
+    if (currentTheme == darkTheme) {
+      blendMode(ADD);
+      noFill();
+    }
+
+    stroke(currentTheme.getStrokeColor());
     translate(width/2, height/2);
 
-    drawHelp();
+    if (!runOnTestMode) {
+      drawHelp();
+    }
     
     if (drawAxis) {
       stroke(190);
       line(0, -height/2, 0, height/2);
       line(-width/2, 0, width/2, 0);
-      stroke(0);
+      stroke(currentTheme.getStrokeColor());
     }
 
     if (population != null) {
       if (drawFitestOnly) {
-        drawDoodleWithDNAInfo(population.getFitest());
+        Doodle fittest = population.getFitest();
+        drawDoodleWithDNAInfo(fittest);
 
         if (saveDoodle) {
-          saveFrame(savesPrefix + population.getId() + "/member_fittest.png");
+          String frameFilename = savesPrefix + population.getId() + "/fittest.png";
+          if (runOnTestMode) {
+            frameFilename = testsPrefix + zeroPadded(testsRan) + "/fittest_" + fittest.getFitness().getRating() + ".png";
+          }
+
+          saveFrame(frameFilename);
         }
       } else {
-        drawDoodleWithDNAInfo(population.getMember(memberToDraw));
+        Doodle member = population.getMember(memberToDraw);
+        drawDoodleWithDNAInfo(member);
         memberToDraw = (memberToDraw + 1) % population.getPopulationSize();
 
         if (saveDoodle) {
-          saveFrame(savesPrefix + population.getId() + "/member_" + zeroPadded(memberToDraw) + ".png");
+          String frameFilename = savesPrefix + population.getId() + "/member_" + zeroPadded(memberToDraw) + "_" + member.getFitness().getRating() + ".png";
+          if (runOnTestMode) {
+            frameFilename = testsPrefix + zeroPadded(testsRan) + "/member_" + zeroPadded(memberToDraw) + "_" + member.getFitness().getRating() + ".png";
+          }
+
+          saveFrame(frameFilename);
         }
+      }
+
+      if (runOnTestMode && testsRan < numberOfTests) {
+        run();
+        testsRan++;
+      } else {
+        runOnTestMode = false;
+        testsRan = 0;
+        exit();
       }
     } else {
       drawStartInstructions();
@@ -73,12 +110,13 @@ void draw() {
 }
 
 void drawHelp() {
-  String helpMessage  = "Click to generate a new image.\n" +
+  String helpMessage  = "Click or press enter to generate a new image.\n" +
     "Press 's' to save.\n" +
     "Press 'a' to print analysis.\n" +
     "Press 'x' to toggle the axis.\n" +
     "Press 'f' to toggle between fittest and all.\n" +
     "Press 'i' to toggle DNA and fitness information.\n" +
+    "Press 't' to change the color theme.\n" +
     "Press 'h' to close help.";
 
   if (!showHelp) {
@@ -87,9 +125,9 @@ void drawHelp() {
 
   textSize(12);
   textAlign(LEFT);
-  fill(255, 255, 255);
+  fill(currentTheme.getTextColor());
   text(helpMessage, -width/2, -height/2 + 12);
-  fill(0, 0, 0);
+  fill(currentTheme.getFillColor());
 }
 
 void drawDoodleWithDNAInfo(Doodle doodle) {
@@ -102,19 +140,19 @@ void drawDoodleWithDNAInfo(Doodle doodle) {
   if (outputDNAAndFitness) {
     textSize(12);
     textAlign(CENTER);
-    fill(255, 255, 255);
+    fill(currentTheme.getTextColor());
     text(String.format("DNA: %s\nFitness: %f",
       doodle.getDNA().toString(), doodle.getFitness().getRating()), 0, height/2 - 36);
-    fill(0, 0, 0);
+    fill(currentTheme.getFillColor());
   }
 }
 
 void drawStartInstructions() {
   textSize(12);
   textAlign(CENTER);
-  fill(0, 0, 0);
-  text("Click to generate a new image.", 0, 0);
-  fill(255, 255, 255);
+  fill(currentTheme.getTextColor());
+  text("Click or press enter to generate a new image.", 0, 0);
+  fill(currentTheme.getFillColor());
 }
 
 void mousePressed() {
@@ -123,10 +161,16 @@ void mousePressed() {
 
 void run() {
   population = new Population(timestamp(), populationSize, mutationRate);
+  int revivePopulationConsecutiveTries = 0;
 
   do {
     if (dumpPopulationDNA) {
-      dumpPopulationDNAToDisk(population);
+      String filename = savesPrefix + population.getId() + "/gen_" + zeroPadded(population.getGenerations()) + ".txt";
+      if (runOnTestMode) {
+        filename = testsPrefix + zeroPadded(testsRan) + "/gen_" + zeroPadded(population.getGenerations()) + ".txt";
+      }
+
+      dumpPopulationDNAToDisk(population, filename);
     }
 
     population.select();
@@ -136,6 +180,12 @@ void run() {
       // A max fitness of zero means a failed population.
       // Start over with a new random population.
       population = new Population(timestamp(), populationSize, mutationRate);
+
+      revivePopulationConsecutiveTries++;
+      if (revivePopulationConsecutiveTries >= maxGenerations) {
+        population = null;
+        break;
+      }
     }
   } while (population.getMaxFitness() <= minimumFitness && population.getGenerations() <= maxGenerations);
 
@@ -148,8 +198,8 @@ void run() {
   }
 }
 
-void dumpPopulationDNAToDisk(Population population) {
-  PrintWriter writer =  createWriter(savesPrefix + population.getId() + "/gen_" + zeroPadded(population.getGenerations()) + "_.txt");
+void dumpPopulationDNAToDisk(Population population, String filename) {
+  PrintWriter writer = createWriter(filename);
   Doodle[] populationMembers = population.getMembers();
   for (int j = 0; j != populationMembers.length; j++) {
     Doodle member = populationMembers[j];
@@ -160,7 +210,9 @@ void dumpPopulationDNAToDisk(Population population) {
 }
 
 void keyPressed() {
-  if (key == 'a') {
+  if (key == ENTER) {
+    run();
+  } else if (key == 'a') {
     println(population.getFitest().getFitness());
   } else if (key == 's') {
     saveFrame(starredSavesPrefix + population.getFitest().getDNA().encode() + ".png");
@@ -171,6 +223,12 @@ void keyPressed() {
     drawFitestOnly = !drawFitestOnly;
   } else if (key == 'i') {
     outputDNAAndFitness = !outputDNAAndFitness;
+  } else if (key == 't') {
+    if (currentTheme == lightTheme) {
+      currentTheme = darkTheme;
+    } else {
+      currentTheme = lightTheme;
+    }
   } else if (key == 'h') {
     showHelp = !showHelp;
   }
