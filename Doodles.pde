@@ -13,7 +13,7 @@ int maxGenerations = 25;
 // Fitness factors
 float symmetryImportanceFactor = 1;
 float distributionImportanceFactor = 2;
-float growthImportanceFactor = 2;
+float growthImportanceFactor = 3;
 float minimumFitness = 0.9;
 
 // Output options

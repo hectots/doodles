@@ -1,5 +1,6 @@
 import glob
 import pprint
+from shutil import copyfile
 
 debug = False
 
@@ -12,18 +13,22 @@ for f in glob.glob("tests_*/test_*/fittest*.png"):
 		test_cases[test_case] = []
 	test_cases[test_case].append(fitness)
 
+	copyfile(f, "images/" + test_case + "/" + str(fitness) + ".png")
+
 for test_case, fitneses in test_cases.items():
 	print test_case
+	best_test = 0
 	max_fitness = 0
 	sum_total = 0
-	for f in fitneses:
+	for i, f in enumerate(fitneses):
 		if f > max_fitness:
 			max_fitness = f
+			best_test = i
 		sum_total += f
 
 	avg_fitness = sum_total / len(fitneses)
 
-	print "\tMax: %f, Avg: %f" % (max_fitness, avg_fitness)
+	print "\tBest Test: %d, Max: %f, Avg: %f" % (best_test, max_fitness, avg_fitness)
 
 if debug:
 	pprint.pprint(test_cases)
