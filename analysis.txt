@@ -1,0 +1,16 @@
+tests_1_2_2
+	Best Test: 2, Max: 0.800000, Avg: 0.558702, Min: 0.418794
+tests_1_2_3
+	Best Test: 14, Max: 0.750547, Avg: 0.605012, Min: 0.418794
+tests_1_2_1
+	Best Test: 11, Max: 0.773810, Avg: 0.645320, Min: 0.407407
+tests_1_1_1
+	Best Test: 21, Max: 0.774222, Avg: 0.593136, Min: 0.500712
+tests_2_1_1
+	Best Test: 0, Max: 0.644400, Avg: 0.461885, Min: 0.390363
+tests_1_1_2
+	Best Test: 19, Max: 0.722807, Avg: 0.558872, Min: 0.500763
+tests_2_2_1
+	Best Test: 11, Max: 0.666667, Avg: 0.533384, Min: 0.400000
+tests_2_1_2
+	Best Test: 7, Max: 0.561880, Avg: 0.452167, Min: 0.400739

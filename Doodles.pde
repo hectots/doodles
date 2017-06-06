@@ -22,14 +22,14 @@ String starredSavesPrefix = "starred/";
 boolean printRulesForFittest = false;
 boolean dumpPopulationDNA = true;
 boolean drawFitestOnly = true;
-boolean outputDNAAndFitness = true;
+boolean outputDNAAndFitness = false;
 boolean saveDoodle = true;
 boolean showHelp = false;
 boolean drawAxis = false;
 
 Theme lightTheme = new Theme(color(255, 255, 255), color(0, 0, 0), color(0, 0, 0));
 Theme darkTheme = new Theme(color(0, 0, 0), color(255, 64, 8, 128), color(255, 255, 255));
-Theme currentTheme = lightTheme;
+Theme currentTheme = darkTheme;
 
 int memberToDraw = 0;
 
@@ -37,7 +37,17 @@ int memberToDraw = 0;
 boolean runOnTestMode = true;
 int numberOfTests = 25;
 int testsRan = 0;
-String testsPrefix = "tests/test_";
+String[] testCases = {
+  "1_1_1",
+  "2_1_1",
+  "1_2_1",
+  "1_1_2",
+  "2_2_1",
+  "2_1_2",
+  "1_2_2",
+  "1_2_3"
+};
+int currentTestCase = 0;
 
 void setup() {
   size(800, 600);
@@ -75,7 +85,7 @@ void draw() {
         if (saveDoodle) {
           String frameFilename = savesPrefix + population.getId() + "/fittest.png";
           if (runOnTestMode) {
-            frameFilename = testsPrefix + zeroPadded(testsRan) + "/fittest_" + fittest.getFitness().getRating() + ".png";
+            frameFilename = getTestsPrefix() + zeroPadded(testsRan) + "/fittest_" + fittest.getFitness().getRating() + ".png";
           }
 
           saveFrame(frameFilename);
@@ -88,7 +98,7 @@ void draw() {
         if (saveDoodle) {
           String frameFilename = savesPrefix + population.getId() + "/member_" + zeroPadded(memberToDraw) + "_" + member.getFitness().getRating() + ".png";
           if (runOnTestMode) {
-            frameFilename = testsPrefix + zeroPadded(testsRan) + "/member_" + zeroPadded(memberToDraw) + "_" + member.getFitness().getRating() + ".png";
+            frameFilename = getTestsPrefix() + zeroPadded(testsRan) + "/member_" + zeroPadded(memberToDraw) + "_" + member.getFitness().getRating() + ".png";
           }
 
           saveFrame(frameFilename);
@@ -98,9 +108,15 @@ void draw() {
       if (runOnTestMode && testsRan < numberOfTests) {
         run();
         testsRan++;
-      } else {
-        runOnTestMode = false;
+      } else if (runOnTestMode && currentTestCase < testCases.length - 1) {
+        currentTestCase++;
         testsRan = 0;
+
+        String[] params = testCases[currentTestCase].split("_");
+        symmetryImportanceFactor = Integer.parseInt(params[0]);
+        distributionImportanceFactor = Integer.parseInt(params[1]);
+        growthImportanceFactor = Integer.parseInt(params[2]);
+      } else if (runOnTestMode && currentTestCase >= testCases.length - 1) {
         exit();
       }
     } else {
@@ -167,7 +183,7 @@ void run() {
     if (dumpPopulationDNA) {
       String filename = savesPrefix + population.getId() + "/gen_" + zeroPadded(population.getGenerations()) + ".txt";
       if (runOnTestMode) {
-        filename = testsPrefix + zeroPadded(testsRan) + "/gen_" + zeroPadded(population.getGenerations()) + ".txt";
+        filename = getTestsPrefix() + zeroPadded(testsRan) + "/gen_" + zeroPadded(population.getGenerations()) + ".txt";
       }
 
       dumpPopulationDNAToDisk(population, filename);
@@ -241,4 +257,8 @@ String timestamp() {
 
 String zeroPadded(int i) {
   return String.format("%02d", i);
+}
+
+String getTestsPrefix() {
+  return "tests_" + testCases[currentTestCase] + "/test_";
 }
