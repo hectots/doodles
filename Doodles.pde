@@ -22,7 +22,7 @@ String starredSavesPrefix = "starred/";
 boolean printRulesForFittest = false;
 boolean dumpPopulationDNA = true;
 boolean drawFitestOnly = true;
-boolean outputDNAAndFitness = false;
+boolean outputDNAAndFitness = true;
 boolean saveDoodle = true;
 boolean showHelp = false;
 boolean drawAxis = false;
@@ -34,7 +34,7 @@ Theme currentTheme = darkTheme;
 int memberToDraw = 0;
 
 // Test mode options
-boolean runOnTestMode = true;
+boolean runOnTestMode = false;
 int numberOfTests = 25;
 int testsRan = 0;
 String[] testCases = {
@@ -48,6 +48,11 @@ String[] testCases = {
   "1_2_3"
 };
 int currentTestCase = 0;
+
+boolean runOnManualMode = false;
+Object[] manualModeDNASequence = {'A', 'A', 'A', 'A', 'A', 'B', 'A', 'F', 'A', 'B', 'B', 'A', 'A', 'A', 'F', 'F', 'F', '-', 'B', 4, 14, 19.0, 1.43117};
+DNA manualModeDNA = new DNA(manualModeDNASequence);
+Doodle manualModeDoodle;
 
 void setup() {
   size(800, 600);
@@ -66,7 +71,7 @@ void draw() {
     stroke(currentTheme.getStrokeColor());
     translate(width/2, height/2);
 
-    if (!runOnTestMode) {
+    if (!runOnTestMode && !runOnManualMode) {
       drawHelp();
     }
     
@@ -75,6 +80,15 @@ void draw() {
       line(0, -height/2, 0, height/2);
       line(-width/2, 0, width/2, 0);
       stroke(currentTheme.getStrokeColor());
+    }
+
+    if (runOnManualMode) {
+      if (manualModeDoodle == null) {
+        manualModeDoodle = new Doodle(manualModeDNA);
+        manualModeDoodle.calculateFitness();
+      }
+
+      drawDoodleWithDNAInfo(manualModeDoodle);
     }
 
     if (population != null) {
@@ -119,7 +133,7 @@ void draw() {
       } else if (runOnTestMode && currentTestCase >= testCases.length - 1) {
         exit();
       }
-    } else {
+    } else if (!runOnManualMode) {
       drawStartInstructions();
     }
   }
@@ -147,7 +161,7 @@ void drawHelp() {
 }
 
 void drawDoodleWithDNAInfo(Doodle doodle) {
-  if (doodle.getFitness().getRating() > 0) {
+  if (doodle.getFitness().getRating() > 0 || runOnManualMode) {
     pushMatrix();
     doodle.drawDoodle();
     popMatrix();
@@ -172,6 +186,8 @@ void drawStartInstructions() {
 }
 
 void mousePressed() {
+  if (runOnManualMode) return;
+
   run();
 }
 
@@ -180,17 +196,10 @@ void run() {
   int revivePopulationConsecutiveTries = 0;
 
   do {
-    if (dumpPopulationDNA) {
-      String filename = savesPrefix + population.getId() + "/gen_" + zeroPadded(population.getGenerations()) + ".txt";
-      if (runOnTestMode) {
-        filename = getTestsPrefix() + zeroPadded(testsRan) + "/gen_" + zeroPadded(population.getGenerations()) + ".txt";
-      }
-
-      dumpPopulationDNAToDisk(population, filename);
-    }
-
     population.select();
     population.reproduce();
+
+    tryDumpingPopulationDNAToDisk(population);
 
     if (population.getMaxFitness() <= 0) {
       // A max fitness of zero means a failed population.
@@ -214,18 +223,35 @@ void run() {
   }
 }
 
+void tryDumpingPopulationDNAToDisk(Population population) {
+  if (dumpPopulationDNA) {
+    String filename = savesPrefix + population.getId() + "/gen_" + zeroPadded(population.getGenerations()) + ".txt";
+    if (runOnTestMode) {
+      filename = getTestsPrefix() + zeroPadded(testsRan) + "/gen_" + zeroPadded(population.getGenerations()) + ".txt";
+    }
+
+    dumpPopulationDNAToDisk(population, filename);
+  }
+}
+
 void dumpPopulationDNAToDisk(Population population, String filename) {
+  Doodle fittest = population.getFitest();
   PrintWriter writer = createWriter(filename);
   Doodle[] populationMembers = population.getMembers();
   for (int j = 0; j != populationMembers.length; j++) {
     Doodle member = populationMembers[j];
-    writer.println(j + " | " + member.getDNA().toString() + "  |  " + member.getFitness().getRating());
+    writer.println(j + " | " + 
+      member.getDNA().toString() + "  |  " + 
+      member.getFitness().getRating() + "  |  " + 
+      (member == fittest ? "x" : "_"));
   }
   writer.flush();
   writer.close();
 }
 
 void keyPressed() {
+  if (runOnManualMode) return;
+
   if (key == ENTER) {
     run();
   } else if (key == 'a') {

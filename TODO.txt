@@ -1,12 +1,2 @@
 # TODO
 
-- Implement the genetic algorithm.
-- DNA could contain the following:
-	- 8 slots for the rules.
-	- slots for the renderer parameters.
-	- slot for generations to grow.
-- Fitness function could check for:
-	- collisions
-	- distribution
-	- symmetry
-- Renderer does not have to draw anything, only store positions and size to use in the fitness calculations.
